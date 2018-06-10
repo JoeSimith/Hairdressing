@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="UserMapper">
+	<sql id="userColumns">userId,userName,account,password,phone,securityCode,timeout,isInsider,userPicture,isVIP,vipStartTime,vipEndTime,roleId</sql>
+	<!-- 将vo实体类转换为映射文件 ，因为在mybatis-config的配置文件中已经用了别名，因此这里可以这样写：type="User"-->
+	
+	<resultMap type="User" id="userResultMap">
+		<id column="userId" property="userId"/>
+		<result column="userName" property="userName"/>
+		<result column="password" property="password"/>
+		<result column="businessId" property="businessId"/>
+		<result column="fxsPhone" property="fxsPhone"/>
+		<result column="fxsQQorVX" property="fxsQQorVX"/>
+		<result column="fxsUser" property="fxsUser"/>
+		<result column="loginId" property="loginId"/>
+		<result column="diffFlag" property="diffFlag"/>
+		<result column="headSculpturePath" property="headSculpturePath"/>
+		<result column="createDate" property="createDate"/>
+		<result column="delFlag" property="delFlag"/>
+	</resultMap>
+	
+	<!-- 新增-->
+	<insert id="save" parameterType="pd">
+		insert into SYS_USER(
+			userName,
+			password,
+			businessId,
+			fxsPhone,
+			fxsQQorVX,
+			fxsUser,
+			loginId,
+			diffFlag,
+			headSculpturePath,
+			createDate,
+			delFlag,
+			userId
+        ) values (
+			#{userName},
+			#{password},
+			#{businessId},
+			#{fxsPhone},
+			#{fxsQQorVX},
+			#{fxsUser},
+			#{loginId},
+			#{diffFlag},
+			#{headSculpturePath},
+			#{createDate},
+			#{delFlag},
+			#{userId}
+        )
+    </insert>
+
+
+    <!-- 删除-->
+    <delete id="delete" parameterType="pd">
+        delete from SYS_USER
+        where
+		userId= #{userId}
+    </delete>
+
+
+    <!-- 修改 -->
+    <update id="edit" parameterType="pd">
+        update  SYS_USER
+        set
+				userName = #{userName},
+				businessId = #{businessId},
+				fxsPhone = #{fxsPhone},
+				fxsQQorVX = #{fxsQQorVX},
+				fxsUser = #{fxsUser},
+				diffFlag = #{diffFlag},
+				headSculpturePath = #{headSculpturePath},
+				delFlag = #{delFlag},
+				userId= userId
+        where
+		userId= #{userId}
+    </update>
+
+
+    <!-- 通过ID获取数据 -->
+    <select id="findById" parameterType="pd" resultType="pd">
+        select
+			a.userName,
+			a.businessId,
+			a.fxsPhone,
+			a.fxsQQorVX,
+			a.fxsUser,
+			a.loginId,
+			a.diffFlag,
+			a.headSculpturePath,
+			a.createDate,
+			a.delFlag,
+			a.userId
+        from
+        	SYS_USER a
+        where
+			a.userId= #{userId}
+    </select>
+
+
+    <!-- 列表 -->
+    <select id="datalistPage" parameterType="page" resultType="pd">
+        select
+			a.userName,
+			a.businessId,
+			a.fxsPhone,
+			a.fxsQQorVX,
+			a.fxsUser,
+			a.loginId,
+			a.diffFlag,
+			a.headSculpturePath,
+			a.createDate,
+			a.delFlag,
+			a.userId
+        from
+        	SYS_USER a
+    </select>
+
+    <!-- 列表(全部) -->
+    <select id="listAll" parameterType="pd" resultType="pd">
+        select
+			a.userName,
+			a.businessId,
+			a.fxsPhone,
+			a.fxsQQorVX,
+			a.fxsUser,
+			a.loginId,
+			a.diffFlag,
+			a.headSculpturePath,
+			a.createDate,
+			a.delFlag,
+			a.userId
+        from
+        	SYS_USER a
+    </select>
+
+    <!-- 批量删除 -->
+    <delete id="deleteAll" parameterType="String">
+        delete from SYS_USER
+        where
+			a.userId
+		in
+        <foreach item="item" index="index" collection="array" open="(" separator="," close=")">
+		#{item}
+        </foreach>
+    </delete>
+	
+	<!-- 登陆验证用 -->
+	<select id="loginUser" parameterType="pd" resultMap="userResultMap" useCache="false">
+		SELECT *
+		FROM sys_user
+		WHERE 1=1
+		AND loginId = #{loginId}
+		AND password = #{password}
+	</select>
+
+</mapper>

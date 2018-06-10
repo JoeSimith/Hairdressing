@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ShopMapper">
+	
+	
+	<!-- 新增-->
+	<insert id="save" parameterType="pd">
+		insert into BUS_SHOP(
+			shop_shopname,
+			shop_addr,
+			shop_name,
+			shop_TEL,
+			shop_idcardaccount,
+			shop_qqorvx,
+			shop_account,
+			EXPIRY_start,
+			EXPIRY_end,
+			shop_Verification_code,
+			create_date,
+			shop_del_flag,
+			ID
+        ) values (
+			#{shop_shopname},
+			#{shop_addr},
+			#{shop_name},
+			#{shop_TEL},
+			#{shop_idcardaccount},
+			#{shop_qqorvx},
+			#{shop_account},
+			#{EXPIRY_start},
+			#{EXPIRY_end},
+			#{shop_Verification_code},
+			#{create_date},
+			#{shop_del_flag},
+			#{ID}
+        )
+    </insert>
+
+
+    <!-- 删除-->
+    <delete id="delete" parameterType="pd">
+        delete from BUS_SHOP
+        where
+		ID= #{ID}
+    </delete>
+
+
+    <!-- 修改 -->
+    <update id="edit" parameterType="pd">
+        update  BUS_SHOP
+        set
+				shop_shopname = #{shop_shopname},
+				shop_addr = #{shop_addr},
+				shop_name = #{shop_name},
+				shop_TEL = #{shop_TEL},
+				shop_idcardaccount = #{shop_idcardaccount},
+				shop_qqorvx = #{shop_qqorvx},
+				shop_account = #{shop_account},
+				EXPIRY_start = #{EXPIRY_start},
+				EXPIRY_end = #{EXPIRY_end},
+				shop_Verification_code = #{shop_Verification_code},
+				create_date = #{create_date},
+				shop_del_flag = #{shop_del_flag},
+				ID= ID
+        where
+		ID= #{ID}
+    </update>
+
+
+    <!-- 通过ID获取数据 -->
+    <select id="findById" parameterType="pd" resultType="pd">
+        select
+			a.shop_shopname,
+			a.shop_addr,
+			a.shop_name,
+			a.shop_TEL,
+			a.shop_idcardaccount,
+			a.shop_qqorvx,
+			a.shop_account,
+			a.EXPIRY_start,
+			a.EXPIRY_end,
+			a.shop_Verification_code,
+			a.create_date,
+			a.shop_del_flag,
+			a.ID
+        from
+        	BUS_SHOP a
+        where
+			a.ID= #{ID}
+    </select>
+
+
+    <!-- 列表 -->
+    <select id="datalistPage" parameterType="page" resultType="pd">
+        select
+			a.shop_shopname,
+			a.shop_addr,
+			a.shop_name,
+			a.shop_TEL,
+			a.shop_idcardaccount,
+			a.shop_qqorvx,
+			a.shop_account,
+			a.EXPIRY_start,
+			a.EXPIRY_end,
+			a.shop_Verification_code,
+			a.create_date,
+			a.shop_del_flag,
+			a.ID
+        from
+        	BUS_SHOP a
+    </select>
+
+    <!-- 列表(全部) -->
+    <select id="listAll" parameterType="pd" resultType="pd">
+        select
+			a.shop_shopname,
+			a.shop_addr,
+			a.shop_name,
+			a.shop_TEL,
+			a.shop_idcardaccount,
+			a.shop_qqorvx,
+			a.shop_account,
+			a.EXPIRY_start,
+			a.EXPIRY_end,
+			a.shop_Verification_code,
+			a.create_date,
+			a.shop_del_flag,
+			a.ID
+        from
+        	BUS_SHOP a
+    </select>
+
+    <!-- 批量删除 -->
+    <delete id="deleteAll" parameterType="String">
+        delete from BUS_SHOP
+        where
+			a.ID
+		in
+        <foreach item="item" index="index" collection="array" open="(" separator="," close=")">
+		#{item}
+        </foreach>
+    </delete>
+
+</mapper>

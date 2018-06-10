@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="HairstyleMapper">
+	
+	
+	<!-- 新增-->
+	<insert id="save" parameterType="pd">
+		insert into BUS_HAIRSTYLE(
+			styletitle,
+			content,
+			userid,
+			publishtime,
+			viewcount,
+			thumbnail1,
+			thumbnail2,
+			thumbnail3,
+			id
+        ) values (
+			#{styletitle},
+			#{content},
+			#{userid},
+			#{publishtime},
+			#{viewcount},
+			#{thumbnail1},
+			#{thumbnail2},
+			#{thumbnail3},
+			#{id}
+        )
+    </insert>
+
+
+    <!-- 删除-->
+    <delete id="delete" parameterType="pd">
+        delete from BUS_HAIRSTYLE
+        where
+		id= #{id}
+    </delete>
+
+
+    <!-- 修改 -->
+    <update id="edit" parameterType="pd">
+        update  BUS_HAIRSTYLE
+        set
+				styletitle = #{styletitle},
+				content = #{content},
+				userid = #{userid},
+				publishtime = #{publishtime},
+				viewcount = #{viewcount},
+				thumbnail1 = #{thumbnail1},
+				thumbnail2 = #{thumbnail2},
+				thumbnail3 = #{thumbnail3},
+				id= id
+        where
+		id= #{id}
+    </update>
+
+
+    <!-- 通过ID获取数据 -->
+    <select id="findById" parameterType="pd" resultType="pd">
+        select
+			a.styletitle,
+			a.content,
+			a.userid,
+			a.publishtime,
+			a.viewcount,
+			a.thumbnail1,
+			a.thumbnail2,
+			a.thumbnail3,
+			a.id
+        from
+        	BUS_HAIRSTYLE a
+        where
+			a.id= #{id}
+    </select>
+
+
+    <!-- 列表 -->
+    <select id="datalistPage" parameterType="page" resultType="pd">
+        select
+			a.styletitle,
+			a.content,
+			a.userid,
+			a.publishtime,
+			a.viewcount,
+			a.thumbnail1,
+			a.thumbnail2,
+			a.thumbnail3,
+			a.id
+        from
+        	BUS_HAIRSTYLE a
+    </select>
+
+    <!-- 列表(全部) -->
+    <select id="listAll" parameterType="pd" resultType="pd">
+        select
+			a.styletitle,
+			a.content,
+			a.userid,
+			a.publishtime,
+			a.viewcount,
+			a.thumbnail1,
+			a.thumbnail2,
+			a.thumbnail3,
+			a.id
+        from
+        	BUS_HAIRSTYLE a
+    </select>
+
+    <!-- 批量删除 -->
+    <delete id="deleteAll" parameterType="String">
+        delete from BUS_HAIRSTYLE
+        where
+			a.id
+		in
+        <foreach item="item" index="index" collection="array" open="(" separator="," close=")">
+		#{item}
+        </foreach>
+    </delete>
+
+</mapper>
