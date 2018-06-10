@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<project name="WxMetro" default="deleteWar" basedir=".">  
+    <property name="build" value="${basedir}/build" />
+    <property name="build.class" value="${build}/classes" />  
+	<property name="build.properties" value="${basedir}/resources" />  
+    <property name="src" value="${basedir}/src" />  
+    <property name="webApp" value="${basedir}/WebRoot" />  
+    <property name="lib" value="${webApp}/WEB-INF/lib" />  
+      
+    <!--请将下面的路径改为你本地的路径-->  
+    <property name="webserver" value="d:/webapps" />  
+	
+	<!--jar 包名称为本工程的名称加上 .jar 后缀名 -->
+   <property name="jar" value="${ant.project.name}_temp.jar" />
+   <!--jar 包名称为本工程的名称加上 .jar 后缀名 -->
+   <property name="obfjar" value="${ant.project.name}.jar" />
+   <!--yguard 混淆器工作产生的日志文件 -->
+   <property name="obfuscationlog" value="${ant.project.name}_obf_log.xml" />
+	
+    
+    <!--定义CLASSPACH,编译时用到你外部加入的包-->  
+    <path id="classpath">  
+        <pathelement location="${src}" />  
+        <fileset dir="${lib}" includes="***.jar" />  
+    </path>  
+  
+    <!--删除任务-->  
+    <target name="clean" description="删除">  
+        <echo message="删除目录" />  
+    	<delete dir="${build}" />
+    </target>  
+  
+    <!--创建一个临时目录-->  
+    <target name="init" description="创建目录" depends="clean">  
+        <echo message="创建目录--以执行" />  
+        <mkdir dir="${build.class}" />  
+    </target>  
+  
+  
+    <!--编译java源文件-->  
+    <target name="compile" description="编译文件" depends="init">  
+        <echo message="编译文件" />  
+        <javac srcdir="${src}" destdir="${build.class}">  
+            <classpath refid="classpath" />  
+            <compilerarg line="-encoding UTF-8 " />  
+        </javac>  
+    </target>  
+	
+	<!-- 打包 -->
+    <target name="jar" depends="compile">
+    	<echo message="打成jar" />
+    	<!--<jar jarfile="${jar}" basedir="${build.class}" includes="com/Hairdressing/service/**,com/Hairdressing/controller/**,com/Hairdressing/task/**">-->
+       	<jar jarfile="${jar}" basedir="${build.class}" >
+       		<fileset dir="${build.properties}">
+	          <include name="**/*.*"/>
+	        </fileset>
+       </jar>
+    </target>
+	
+	<!-- 混淆任务 -->
+    <target name="obfuscate" depends="jar">
+       <taskdef name="obfuscate" classname="com.yworks.yguard.ObfuscatorTask" classpath="yguard.jar" />
+ 
+       <!-- 不同工程需要修改的地方 -->
+       <obfuscate mainclass="${build.class}" logfile="${obfuscationlog}" replaceclassnamestrings="true">
+           <inoutpair in="${jar}" out="${obfjar}" />
+       		<adjust replaceContent="true">
+       	        <!-- keep the complete path to the resources, (gifs...) even if -->
+       	        <!-- package com.mycompany.myapp gets obfuscated by name -->
+       	        <include name="**/*.*"/>
+       	      </adjust>
+   			 <adjust replacePath="true">
+       	        <!-- keep the complete path to the resources, (gifs...) even if -->
+       	        <!-- package com.mycompany.myapp gets obfuscated by name -->
+       	        <include name="**/*.*"/>
+       	      </adjust>
+       		  <adjust replaceName="true">
+       	        <!-- keep the complete path to the resources, (gifs...) even if -->
+       	        <!-- package com.mycompany.myapp gets obfuscated by name -->
+       	        <include name="**/*.*"/>
+       	      </adjust>
+       </obfuscate>
+    </target>
+  
+    <!--打成WAR包-->  
+    <target name="generwar" depends="obfuscate">  
+        <echo message="打成WAR" />  
+        <war destfile="${build}/${ant.project.name}.war" webxml="${webApp}/WEB-INF/web.xml">  
+            <fileset dir="WebRoot">  
+            </fileset>  
+            <lib dir="${lib}" />  
+            <classes dir="${build.class}" />  
+        </war>  
+    </target>  
+  
+  
+    <!--把WAR放到一个指定目录，这里是直接布署到TOMCAT服务器-->  
+    <target name="fabu" depends="generwar" description="发布">  
+        <copy file="${build}/${ant.project.name}.war" todir="${webserver}">  
+        </copy>  
+    </target>  
+  
+      
+  
+    <!--把打好的WAR删除  --> 
+    <target name="deleteWar" depends="fabu" description="删除服务器上的war">  
+        <delete dir="${build}" />  
+    </target> 
+</project> 
