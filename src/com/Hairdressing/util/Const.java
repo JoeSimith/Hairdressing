@@ -28,8 +28,12 @@ public class Const {
 	public static final String[] APP_GETAPPUSER_PARAM_ARRAY = new String[]{"USERNAME"};
 	public static final String[] APP_GETAPPUSER_VALUE_ARRAY = new String[]{"用户名"};
 
-	public static final String PICTURE_SAVE_PATH="uploadFiles/picture/";
-	public static final String SPICTURE_SAVE_PATH="uploadFiles/sPicture/";
+	//反馈存储的图片位置
+	public static final String REBACK_SAVE_PATH="/usr/local/images/reback";
+	//public static final String REBACK_SAVE_PATH="D:/tmp";
+	//发型图片存储的位置
+	public static final String HAIRSTYLE_SAVE_PATH="/usr/local/images/hairstyle";
+	//public static final String HAIRSTYLE_SAVE_PATH="D:/tmp";
 
 
 	

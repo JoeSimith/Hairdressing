@@ -18,6 +18,9 @@ import com.Hairdressing.entity.Page;
 import com.Hairdressing.util.AppUtil;
 import com.Hairdressing.util.ObjectExcelView;
 import com.Hairdressing.util.PageData;
+
+import edu.umd.cs.findbugs.util.TripleKeyHashMap;
+
 import com.Hairdressing.service.system.user.UserService;
 
 /** 
@@ -55,11 +58,17 @@ public class UserController extends BaseController {
 	 * 新增
 	 */
 	@ResponseBody
-	@RequestMapping(value = "/save", produces = "application/json;charset=UTF-8")
+	@RequestMapping(value = "/addUser", produces = "application/json;charset=UTF-8")
 	public String save() throws Exception{
 		logBefore(logger, "新增User");
 		PageData pd = this.getPageData();
 		pd.put("userId", this.get32UUID()); // 主键
+	    Integer count = this.userService.testPhoneNumber(pd);
+	    if (count > 0) {
+	    	return this.jsonContent("failed", "手机号已经注册过了！");
+		}
+		String password = new SimpleHash("SHA-1", pd.getString("loginId"), pd.getString("password")).toString();	//密码加密
+		pd.put("password", password);
 		this.userService.save(pd);
 		return this.jsonContent("success", "保存成功");
 	}

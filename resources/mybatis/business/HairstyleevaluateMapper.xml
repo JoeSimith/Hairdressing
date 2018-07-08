@@ -52,6 +52,16 @@
         where
 			a.id= #{id}
     </select>
+    
+    <!-- 通过id获取评价行数 -->
+    <select id="findCountById" parameterType="pd" resultType="integer">
+        select
+			count(a.id) num
+        from
+        	BUS_HAIRSTYLEEVALUATE a
+        where
+			a.hairstyleid= #{hairstyleid}
+    </select>
 
 
     <!-- 列表 -->

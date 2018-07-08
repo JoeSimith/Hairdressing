@@ -57,6 +57,11 @@ public class BaseController {
 		Token token = tokenPool.getToken(tokenStr);
 		return token.getUser();
 	}
+	public User getCurrentUser(String tokenstr) {
+		TokenPool tokenPool=TokenPool.getInstance();
+		Token token = tokenPool.getToken(tokenstr);
+		return token.getUser();
+	}
 	
 	/**
 	 * 得到32位的uuid

@@ -11,20 +11,20 @@
 			userid,
 			publishtime,
 			viewcount,
-			thumbnail1,
-			thumbnail2,
-			thumbnail3,
-			id
+			srcImagePath,
+			id,
+			publishdateteime,
+			evaluatecount
         ) values (
 			#{styletitle},
 			#{content},
 			#{userid},
 			#{publishtime},
 			#{viewcount},
-			#{thumbnail1},
-			#{thumbnail2},
-			#{thumbnail3},
-			#{id}
+			#{srcImagePath},
+			#{id},
+			#{publishdateteime},
+			#{evaluatecount}
         )
     </insert>
 
@@ -46,9 +46,7 @@
 				userid = #{userid},
 				publishtime = #{publishtime},
 				viewcount = #{viewcount},
-				thumbnail1 = #{thumbnail1},
-				thumbnail2 = #{thumbnail2},
-				thumbnail3 = #{thumbnail3},
+				srcImagePath = #{srcImagePath},
 				id= id
         where
 		id= #{id}
@@ -63,9 +61,7 @@
 			a.userid,
 			a.publishtime,
 			a.viewcount,
-			a.thumbnail1,
-			a.thumbnail2,
-			a.thumbnail3,
+			a.srcImagePath,
 			a.id
         from
         	BUS_HAIRSTYLE a
@@ -74,20 +70,50 @@
     </select>
 
 
-    <!-- 列表 -->
+    <!-- 发迹列表 -->
     <select id="datalistPage" parameterType="page" resultType="pd">
-        select
-			a.styletitle,
-			a.content,
-			a.userid,
-			a.publishtime,
-			a.viewcount,
-			a.thumbnail1,
-			a.thumbnail2,
-			a.thumbnail3,
-			a.id
-        from
-        	BUS_HAIRSTYLE a
+		SELECT
+			(
+				@i := CASE
+				WHEN @pre_publishtime = hairstyle.publishtime THEN
+					@i + 1
+				ELSE
+					1
+				END
+			) rownum,
+			date_format(hairstyle.publishtime, '%Y%m%d') publishtime,
+			hairstyle.styletitle,
+			hairstyle.content,
+			hairstyle.srcImagePath,
+			(
+				@pre_publishtime := hairstyle.publishtime
+			) AS publishtimea,
+			hairstyle.ID,
+			SYS_USER.userName,
+			hairstyle.evaluatecount,
+		    date_format(hairstyle.publishdateteime, '%Y%m%d%H%i%s') publishdateteime
+		FROM
+			bus_hairstyle hairstyle,
+			SYS_USER SYS_USER,
+			(
+				SELECT
+					@i := 0 ,@pre_publishtime := ''
+			) AS a
+		WHERE
+			SYS_USER.userId = hairstyle.userid
+		AND SYS_USER.loginId = #{pd.loginId}
+		GROUP BY
+			hairstyle.publishtime,
+		  hairstyle.publishdateteime,
+			hairstyle.styletitle,
+			hairstyle.content,
+			hairstyle.srcImagePath,
+			hairstyle.ID,
+			SYS_USER.userName,
+			hairstyle.evaluatecount
+		ORDER BY
+			hairstyle.publishtime DESC,
+			rownum ASC
     </select>
 
     <!-- 列表(全部) -->
@@ -98,9 +124,7 @@
 			a.userid,
 			a.publishtime,
 			a.viewcount,
-			a.thumbnail1,
-			a.thumbnail2,
-			a.thumbnail3,
+			a.srcImagePath,
 			a.id
         from
         	BUS_HAIRSTYLE a

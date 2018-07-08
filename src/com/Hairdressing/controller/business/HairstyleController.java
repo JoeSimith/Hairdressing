@@ -7,17 +7,26 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang.text.StrBuilder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.Hairdressing.controller.base.BaseController;
 import com.Hairdressing.entity.Page;
+import com.Hairdressing.entity.system.User;
 import com.Hairdressing.util.AppUtil;
+import com.Hairdressing.util.Const;
+import com.Hairdressing.util.DateUtil;
+import com.Hairdressing.util.FileUpload;
 import com.Hairdressing.util.ObjectExcelView;
 import com.Hairdressing.util.PageData;
+import com.Hairdressing.util.Tools;
 import com.Hairdressing.service.business.HairstyleService;
+import com.Hairdressing.service.business.HairstyleevaluateService;
 
 /** 
  * 类名称：HairstyleController
@@ -30,6 +39,9 @@ public class HairstyleController extends BaseController {
 	String menuUrl = "hairstyle/list.do"; //菜单地址(权限用)
 	@Resource(name="hairstyleService")
 	private HairstyleService hairstyleService;
+	
+	@Resource(name="hairstyleevaluateService")
+	private HairstyleevaluateService hairstyleevaluateService;
 	
 	/**
 	 * 新增或编辑
@@ -53,10 +65,36 @@ public class HairstyleController extends BaseController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/save", produces = "application/json;charset=UTF-8")
-	public String save() throws Exception{
+	public String save(@RequestParam(value="file", required=false) MultipartFile[] file
+			,@RequestParam(value="token", required=false) String token
+			,@RequestParam(value="styletitle", required=false) String styletitle
+			,@RequestParam(value="content", required=false) String content) throws Exception{
 		logBefore(logger, "新增Hairstyle");
-		PageData pd = this.getPageData();
+		PageData pd = new PageData();
 		pd.put("id", this.get32UUID()); // 主键
+		User  user = this.getCurrentUser(token);
+		pd.put("userid", user.getUserId());
+		pd.put("styletitle", styletitle);
+		pd.put("content", content);
+		pd.put("publishtime", DateUtil.getDays());
+		pd.put("viewcount", 0);
+		//文件上传处理部分start
+		StrBuilder fileNames = new StrBuilder();
+	    String saveFileName = DateUtil.sdfTimeString() + Tools.getRandomNum();
+	    String filePath = Const.HAIRSTYLE_SAVE_PATH;
+	    for (MultipartFile multipartFile : file) {
+			String fileName = FileUpload.fileUp(multipartFile, filePath, saveFileName + "-"+multipartFile.getOriginalFilename());
+			System.out.println("multipartFile.getOriginalFilename():"+multipartFile.getOriginalFilename());
+			fileNames.append(fileName);
+			fileNames.append("@#");
+	    }
+	    //文件上传处理部分end
+		pd.put("srcImagePath", fileNames.substring(0,fileNames.length()-2));
+		pd.put("publishdateteime", DateUtil.sdfTimeString());
+		PageData hairstyleidsearch = new PageData();
+		hairstyleidsearch.put("hairstyleid", pd.get("id"));
+		int count = hairstyleevaluateService.findCountById(hairstyleidsearch);
+		pd.put("evaluatecount", count);
 		this.hairstyleService.save(pd);
 		return this.jsonContent("success", "保存成功");
 	}

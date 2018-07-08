@@ -1,23 +1,33 @@
 package com.Hairdressing.controller.business;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang.text.StrBuilder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.Hairdressing.controller.base.BaseController;
 import com.Hairdressing.entity.Page;
+import com.Hairdressing.entity.system.User;
+import com.Hairdressing.service.business.RebackService;
 import com.Hairdressing.util.AppUtil;
+import com.Hairdressing.util.Const;
+import com.Hairdressing.util.DateUtil;
+import com.Hairdressing.util.FileUpload;
 import com.Hairdressing.util.ObjectExcelView;
 import com.Hairdressing.util.PageData;
-import com.Hairdressing.service.business.RebackService;
+import com.Hairdressing.util.Tools;
 
 /** 
  * 类名称：RebackController
@@ -52,10 +62,35 @@ public class RebackController extends BaseController {
 	 * 新增
 	 */
 	@ResponseBody
-	@RequestMapping(value = "/save", produces = "application/json;charset=UTF-8")
-	public String save() throws Exception{
+	@RequestMapping(value = "/apisave")
+	public String save(@RequestParam(value="file", required=false) MultipartFile[] file
+			,@RequestParam(value="token", required=false) String token
+			,@RequestParam(value="rebackType", required=false) String rebackType
+			,@RequestParam(value="rebackContent", required=false) String rebackContent) throws Exception{
 		logBefore(logger, "新增Reback");
-		PageData pd = this.getPageData();
+		PageData pd = new PageData();
+		if(token == null)
+		{
+			pd.put("rebackName", "匿名用户反馈！");
+		}else{
+			User  user = this.getCurrentUser(token);
+			pd.put("rebackName", user.getUserName());
+		}
+		//文件上传处理部分start
+		StrBuilder fileNames = new StrBuilder();
+	    String saveFileName = DateUtil.sdfTimeString() + Tools.getRandomNum();
+	    String filePath = Const.REBACK_SAVE_PATH;
+	    for (MultipartFile multipartFile : file) {
+			String fileName = FileUpload.fileUp(multipartFile, filePath, saveFileName + "-"+multipartFile.getOriginalFilename());
+			System.out.println("multipartFile.getOriginalFilename():"+multipartFile.getOriginalFilename());
+			fileNames.append(fileName);
+			fileNames.append("@#");
+	    }
+	    //文件上传处理部分end
+	    pd.put("rebackPath", fileNames.substring(0,fileNames.length()-2));
+		pd.put("rebackType", rebackType);
+		pd.put("rebackContent", rebackContent);
+		pd.put("rebackDate", DateUtil.sdfTimeString());
 		pd.put("ID", this.get32UUID()); // 主键
 		this.rebackService.save(pd);
 		return this.jsonContent("success", "保存成功");

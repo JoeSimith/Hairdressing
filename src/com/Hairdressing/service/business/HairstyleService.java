@@ -39,7 +39,7 @@ public class HairstyleService {
 	}
 	
 	/*
-	*列表
+	*发迹列表
 	*/
 	public List<PageData> listPage(Page page)throws Exception{
 		return (List<PageData>)dao.findForList("HairstyleMapper.datalistPage", page);

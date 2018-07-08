@@ -58,6 +58,12 @@ public class HairstyleevaluateService {
 	public PageData findById(PageData pd)throws Exception{
 		return (PageData)dao.findForObject("HairstyleevaluateMapper.findById", pd);
 	}
+	/*
+	* 通过id获取评价行数
+	*/
+	public int findCountById(PageData pd)throws Exception{
+		return (int)dao.findForObject("HairstyleevaluateMapper.findCountById", pd);
+	}
 	
 	/*
 	* 批量删除

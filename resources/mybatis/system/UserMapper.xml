@@ -58,6 +58,13 @@
         where
 		userId= #{userId}
     </delete>
+    
+    <select id="testPhoneNumber" parameterType="pd" resultType="Integer">
+		SELECT count(1) num
+			FROM SYS_USER
+		WHERE 1=1
+		AND loginId = #{loginId}
+	</select>
 
 
     <!-- 修改 -->

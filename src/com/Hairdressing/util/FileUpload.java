@@ -33,7 +33,7 @@ public class FileUpload {
 			logger.info(e);
 			logger.info(returnVal);
 		}
-		return fileName+extName;
+		return fileName;
 	}
 	
 	/**

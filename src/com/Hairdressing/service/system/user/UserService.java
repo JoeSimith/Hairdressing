@@ -60,6 +60,13 @@ public class UserService {
 	}
 	
 	/*
+	* 通过手机号查询用户是否存在
+	*/
+	public Integer testPhoneNumber(PageData pd)throws Exception{
+		return (Integer)dao.findForObject("UserMapper.testPhoneNumber", pd);
+	}
+	
+	/*
 	* 批量删除
 	*/
 	public void deleteAll(String[] ArrayDATA_IDS)throws Exception{
