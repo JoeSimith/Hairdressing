@@ -28,7 +28,7 @@ public class FileUpload {
 			if (file.getOriginalFilename().lastIndexOf(".") >= 0){
 				extName = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."));
 			}
-			returnVal = copyFile(file.getInputStream(), filePath, fileName+extName).replaceAll("-", "");
+			returnVal = copyFile(file.getInputStream(), filePath, fileName).replaceAll("-", "");
 		} catch (IOException e) {
 			logger.info(e);
 			logger.info(returnVal);

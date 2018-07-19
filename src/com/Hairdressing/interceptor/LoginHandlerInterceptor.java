@@ -41,6 +41,7 @@ public class LoginHandlerInterceptor extends HandlerInterceptorAdapter{
 			return true;
 		}else{
 			String tokenStr = request.getParameter("token");
+			System.out.println("tokenStr:" + tokenStr);
 			TokenPool tokenPool = TokenPool.getInstance();
 			Token token = tokenPool.getToken(tokenStr);
 			if(token==null) {

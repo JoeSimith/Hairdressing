@@ -31,9 +31,15 @@ public class Const {
 	//反馈存储的图片位置
 	public static final String REBACK_SAVE_PATH="/usr/local/images/reback";
 	//public static final String REBACK_SAVE_PATH="D:/tmp";
+	
 	//发型图片存储的位置
 	public static final String HAIRSTYLE_SAVE_PATH="/usr/local/images/hairstyle";
 	//public static final String HAIRSTYLE_SAVE_PATH="D:/tmp";
+	
+	//发型图片压缩后的存储的位置
+	public static final String HAIRSTYLE_SAVE_COMPRESS_PATH="/usr/local/images/hairstyle/compress";
+	//public static final String HAIRSTYLE_SAVE_COMPRESS_PATH="D:/tmp/compress";
+
 
 
 	

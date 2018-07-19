@@ -1,5 +1,6 @@
 package com.Hairdressing.controller.business;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -25,6 +26,9 @@ import com.Hairdressing.util.FileUpload;
 import com.Hairdressing.util.ObjectExcelView;
 import com.Hairdressing.util.PageData;
 import com.Hairdressing.util.Tools;
+
+import net.coobird.thumbnailator.Thumbnails;
+
 import com.Hairdressing.service.business.HairstyleService;
 import com.Hairdressing.service.business.HairstyleevaluateService;
 
@@ -84,6 +88,7 @@ public class HairstyleController extends BaseController {
 	    String filePath = Const.HAIRSTYLE_SAVE_PATH;
 	    for (MultipartFile multipartFile : file) {
 			String fileName = FileUpload.fileUp(multipartFile, filePath, saveFileName + "-"+multipartFile.getOriginalFilename());
+			Thumbnails.of(filePath+File.separator+fileName).scale(0.3f).outputQuality(0.8f).toFile(Const.HAIRSTYLE_SAVE_COMPRESS_PATH+File.separator+fileName);
 			System.out.println("multipartFile.getOriginalFilename():"+multipartFile.getOriginalFilename());
 			fileNames.append(fileName);
 			fileNames.append("@#");
