@@ -141,6 +141,7 @@ public class HairstyleController extends BaseController {
 		Page page = new Page();
 		page.setCurrentPage(pd.getInt("page"));
 		page.setShowCount(pd.getInt("rows"));
+		pd.put("loginId",pd.get("loginId"));
 		page.setPd(pd);
 		List<PageData> resultList = this.hairstyleService.listPage(page);// 分页查询列表
 		return this.jsonContent(resultList, page);

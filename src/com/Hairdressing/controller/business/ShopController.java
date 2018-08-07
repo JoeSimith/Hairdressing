@@ -1,6 +1,7 @@
 package com.Hairdressing.controller.business;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,8 +16,10 @@ import org.springframework.web.servlet.ModelAndView;
 import com.Hairdressing.controller.base.BaseController;
 import com.Hairdressing.entity.Page;
 import com.Hairdressing.util.AppUtil;
+import com.Hairdressing.util.DateUtil;
 import com.Hairdressing.util.ObjectExcelView;
 import com.Hairdressing.util.PageData;
+import com.sun.org.apache.bcel.internal.generic.NEW;
 import com.Hairdressing.service.business.ShopService;
 
 /** 
@@ -57,6 +60,8 @@ public class ShopController extends BaseController {
 		logBefore(logger, "新增Shop");
 		PageData pd = this.getPageData();
 		pd.put("ID", this.get32UUID()); // 主键
+		pd.put("create_date", DateUtil.sdfTimeString()); // 创建时间
+		pd.put("shop_del_flag", "0"); // 删除标识 0 表示未删除 1 表示删除
 		this.shopService.save(pd);
 		return this.jsonContent("success", "保存成功");
 	}
@@ -101,6 +106,23 @@ public class ShopController extends BaseController {
 		page.setPd(pd);
 		List<PageData> resultList = this.shopService.listPage(page);// 分页查询列表
 		return this.jsonContent(resultList, page);
+	}
+	
+	/**
+	 * 
+	 * 获取店铺的列表
+	 * 
+	 * 返回列表JSON
+	 * 
+	 * @throws Exception
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/getShopNameListJson", produces = "application/json;charset=UTF-8")
+	public Object getShopNameListJson() throws Exception {
+		logBefore(logger, "获取getShopNameListJson列表Json");
+		PageData pd = this.getPageData();
+		List<PageData> resultList = this.shopService.listAll(pd);
+		return this.jsonContent(resultList);
 	}
 	
 	/**

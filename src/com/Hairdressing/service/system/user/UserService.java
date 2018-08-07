@@ -37,7 +37,19 @@ public class UserService {
 	public void edit(PageData pd)throws Exception{
 		dao.update("UserMapper.edit", pd);
 	}
+	/*
+	* 修改使用户成为发型师
+	*/
+	public void editToFaXingShi(PageData pd)throws Exception{
+		dao.update("UserMapper.editToFaXingShi", pd);
+	}
 	
+	/*
+	*发型师名片
+	*/
+	public List<PageData> FXSlistPage(Page page)throws Exception{
+		return (List<PageData>)dao.findForList("UserMapper.FXSlistPage", page);
+	}
 	/*
 	*列表
 	*/

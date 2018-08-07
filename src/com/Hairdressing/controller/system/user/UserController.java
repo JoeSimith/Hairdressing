@@ -16,6 +16,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.Hairdressing.controller.base.BaseController;
 import com.Hairdressing.entity.Page;
 import com.Hairdressing.util.AppUtil;
+import com.Hairdressing.util.DateUtil;
 import com.Hairdressing.util.ObjectExcelView;
 import com.Hairdressing.util.PageData;
 
@@ -53,6 +54,18 @@ public class UserController extends BaseController {
 		}
 		return this.jsonContent("success", "保存成功");
 	}
+	/**
+	 * 修改使用户成为发型师
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/editToFaXingShi", produces = "application/json;charset=UTF-8")
+	public String editToFaXingShi() throws Exception{
+		logBefore(logger, "修改使用户成为发型师User");
+		PageData pd = this.getPageData();
+		pd.put("diffFlag", "3");//区分普通用户:1，店长:2，理发师:3
+	    this.userService.editToFaXingShi(pd);
+		return this.jsonContent("success", "保存成功");
+	}
 	
 	/**
 	 * 新增
@@ -69,6 +82,9 @@ public class UserController extends BaseController {
 		}
 		String password = new SimpleHash("SHA-1", pd.getString("loginId"), pd.getString("password")).toString();	//密码加密
 		pd.put("password", password);
+		pd.put("delFlag", "0");// 删除标识 0 表示未删除 1 表示删除
+		pd.put("create_date", DateUtil.sdfTimeString());// 创建时间
+		pd.put("diffFlag", "1");//区分普通用户:1，店长:2，理发师:3
 		this.userService.save(pd);
 		return this.jsonContent("success", "保存成功");
 	}
@@ -84,6 +100,14 @@ public class UserController extends BaseController {
 		userService.delete(pd);
 		return this.jsonContent("success", "删除成功");
 	}
+	/**
+	 * 自动在线续期、心跳时间执行一次
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/onCheck", produces = "application/json;charset=UTF-8")
+	public void onCheck() throws Exception{
+		logBefore(logger, "自动在线续期、心跳时间执行一次");
+	}
 	
 	/**
 	 * 修改
@@ -97,6 +121,24 @@ public class UserController extends BaseController {
 		return this.jsonContent("success", "保存成功");
 	}
 	
+	
+	/**
+	 * 发型师名片 列表
+	 * 
+	 * 返回列表JSON
+	 * @throws Exception 
+	 */
+	@ResponseBody
+	@RequestMapping(value="/FXSlistJson" , produces = "application/json;charset=UTF-8")
+	public Object FXSlistJson() throws Exception {
+		PageData pd = this.getPageData();
+		Page page = new Page();
+		page.setCurrentPage(pd.getInt("page"));
+		page.setShowCount(pd.getInt("rows"));
+		page.setPd(pd);
+		List<PageData> resultList = this.userService.FXSlistPage(page);// 分页查询列表
+		return this.jsonContent(resultList, page);
+	}
 	/**
 	 * 返回列表JSON
 	 * 
@@ -128,6 +170,8 @@ public class UserController extends BaseController {
 	}
 	
 	
+
+	
 	/**
 	 * 列表
 	 */
@@ -138,6 +182,8 @@ public class UserController extends BaseController {
 		mv.setViewName("system/user/list");
 		return mv;
 	}
+	
+	
 	
 	/**
 	 * 去新增页面
