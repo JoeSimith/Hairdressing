@@ -1,12 +1,15 @@
 package com.Hairdressing.controller.business;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.imageio.ImageIO;
 
 import org.apache.commons.lang.text.StrBuilder;
 import org.springframework.stereotype.Controller;
@@ -26,11 +29,15 @@ import com.Hairdressing.util.FileUpload;
 import com.Hairdressing.util.ObjectExcelView;
 import com.Hairdressing.util.PageData;
 import com.Hairdressing.util.Tools;
+import com.sun.org.apache.bcel.internal.generic.NEW;
 
 import net.coobird.thumbnailator.Thumbnails;
+import net.coobird.thumbnailator.Thumbnails.Builder;
+import net.coobird.thumbnailator.geometry.Positions;
 
 import com.Hairdressing.service.business.HairstyleService;
 import com.Hairdressing.service.business.HairstyleevaluateService;
+import com.Hairdressing.service.system.user.UserService;
 
 /** 
  * 类名称：HairstyleController
@@ -46,6 +53,9 @@ public class HairstyleController extends BaseController {
 	
 	@Resource(name="hairstyleevaluateService")
 	private HairstyleevaluateService hairstyleevaluateService;
+	
+	@Resource(name="userService")
+	private UserService userService;
 	
 	/**
 	 * 新增或编辑
@@ -72,12 +82,17 @@ public class HairstyleController extends BaseController {
 	public String save(@RequestParam(value="file", required=false) MultipartFile[] file
 			,@RequestParam(value="token", required=false) String token
 			,@RequestParam(value="styletitle", required=false) String styletitle
-			,@RequestParam(value="content", required=false) String content) throws Exception{
+			,@RequestParam(value="content", required=false) String content
+			,@RequestParam(value="customerIphone", required=false) String customerIphone) throws Exception{
 		logBefore(logger, "新增Hairstyle");
 		PageData pd = new PageData();
+		PageData pdFindByloginId = new PageData();
 		pd.put("id", this.get32UUID()); // 主键
 		User  user = this.getCurrentUser(token);
-		pd.put("userid", user.getUserId());
+		pdFindByloginId.put("loginId", customerIphone);
+		String userId =  this.userService.findByloginId(pdFindByloginId).getString("userId");//通过客户的手机号码客户的userid获取
+		pd.put("userId", userId);
+		pd.put("FxsUserId", user.getUserId());//默认认为发型师发布发型，此处获取的的是登陆人的id
 		pd.put("styletitle", styletitle);
 		pd.put("content", content);
 		pd.put("publishtime", DateUtil.getDays());
@@ -88,7 +103,11 @@ public class HairstyleController extends BaseController {
 	    String filePath = Const.HAIRSTYLE_SAVE_PATH;
 	    for (MultipartFile multipartFile : file) {
 			String fileName = FileUpload.fileUp(multipartFile, filePath, saveFileName + "-"+multipartFile.getOriginalFilename());
-			Thumbnails.of(filePath+File.separator+fileName).scale(0.3f).outputQuality(0.8f).toFile(Const.HAIRSTYLE_SAVE_COMPRESS_PATH+File.separator+fileName);
+//			Thumbnails.of(filePath+File.separator+fileName).scale(0.3f).outputQuality(0.8f)
+//			.toFile(Const.HAIRSTYLE_SAVE_COMPRESS_PATH+File.separator+fileName);
+			File fromPic = new File(filePath+File.separator+fileName);
+			File toPic = new File(Const.HAIRSTYLE_SAVE_COMPRESS_PATH+File.separator+fileName);
+			Thumbnails(fromPic,toPic);
 			System.out.println("multipartFile.getOriginalFilename():"+multipartFile.getOriginalFilename());
 			fileNames.append(fileName);
 			fileNames.append("@#");
@@ -102,6 +121,28 @@ public class HairstyleController extends BaseController {
 		pd.put("evaluatecount", count);
 		this.hairstyleService.save(pd);
 		return this.jsonContent("success", "保存成功");
+	}
+	/**
+	 * 压缩至指定图片尺寸（例如：横400高400），保持图片不变形，多余部分裁剪掉(这个是引的网友的代码) 
+	 * @throws Exception 
+	 * 
+	 */
+	private void Thumbnails(File fromPic,File toPic) throws Exception{
+		BufferedImage image = ImageIO.read(fromPic);  
+		Builder<BufferedImage> builder = null;  
+		int imageWidth = image.getWidth();  
+		int imageHeitht = image.getHeight();  
+		if ((float)400 / 400 != (float)imageWidth / imageHeitht) {  
+		    if (imageWidth > imageHeitht) {  
+		        image = Thumbnails.of(fromPic).height(400).asBufferedImage();  
+		    } else {  
+		        image = Thumbnails.of(fromPic).width(400).asBufferedImage();  
+		    }  
+		    builder = Thumbnails.of(image).sourceRegion(Positions.CENTER, 400, 400).size(400, 400);  
+		} else {  
+		    builder = Thumbnails.of(image).size(400, 400);  
+		}  
+		builder.outputFormat("jpg").toFile(toPic); 
 	}
 	
 	/**
@@ -144,6 +185,24 @@ public class HairstyleController extends BaseController {
 		pd.put("loginId",pd.get("loginId"));
 		page.setPd(pd);
 		List<PageData> resultList = this.hairstyleService.listPage(page);// 分页查询列表
+		return this.jsonContent(resultList, page);
+	}
+	/**
+	 * 返回列表JSON  关注的列表 
+	 * 
+	 * @throws Exception
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/getGridListFousJson", produces = "application/json;charset=UTF-8")
+	public Object getGridListFousJson() throws Exception {
+		logBefore(logger, "获取Hairstyle列表Json");
+		PageData pd = this.getPageData();
+		Page page = new Page();
+		page.setCurrentPage(pd.getInt("page"));
+		page.setShowCount(pd.getInt("rows"));
+		pd.put("userId",pd.get("userId"));
+		page.setPd(pd);
+		List<PageData> resultList = this.hairstyleService.datalistFousPage(page);// 分页查询列表
 		return this.jsonContent(resultList, page);
 	}
 	

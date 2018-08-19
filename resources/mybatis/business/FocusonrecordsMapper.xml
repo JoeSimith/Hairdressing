@@ -24,6 +24,12 @@
 		ID= #{ID}
     </delete>
 
+    <!-- 取消关注发型师-->
+    <delete id="deleteByFxsidAndUserId" parameterType="pd">
+        delete from BUS_FOCUSONRECORDS
+        where
+		FXSID= #{FXSID} and USERID =#{USERID}
+    </delete>
 
     <!-- 修改 -->
     <update id="edit" parameterType="pd">

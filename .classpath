@@ -60,7 +60,7 @@
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/jstl-1.2.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/log4j-1.2.17.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/mail.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/mybatis-3.2.1.jar"/>
+	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/mybatis-3.2.1.jar" sourcepath="C:/Users/dell/.m2/repository/org/mybatis/mybatis/3.2.1/mybatis-3.2.1-sources.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/mybatis-ehcache-1.0.3.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/mybatis-oscache-1.0.1.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/mybatis-spring-1.2.0.jar" sourcepath="C:/Users/dell/.m2/repository/org/mybatis/mybatis-spring/1.2.0/mybatis-spring-1.2.0-sources.jar"/>

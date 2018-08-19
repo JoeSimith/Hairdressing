@@ -32,6 +32,13 @@ public class FocusonrecordsService {
 	}
 	
 	/*
+	* 取消关注发型师
+	*/
+	public void deleteByFxsidAndUserId(PageData pd)throws Exception{
+		dao.delete("FocusonrecordsMapper.deleteByFxsidAndUserId", pd);
+	}
+	
+	/*
 	* 修改
 	*/
 	public void edit(PageData pd)throws Exception{

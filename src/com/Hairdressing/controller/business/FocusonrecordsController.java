@@ -72,6 +72,17 @@ public class FocusonrecordsController extends BaseController {
 		focusonrecordsService.delete(pd);
 		return this.jsonContent("success", "删除成功");
 	}
+	/**
+	 * 取消关注发型师
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/deleteByFxsidAndUserId", produces = "application/json;charset=UTF-8")
+	public String deleteByFxsidAndUserId() throws Exception{
+		logBefore(logger, "取消关注发型师 删除Focusonrecords");
+		PageData pd = this.getPageData();
+		focusonrecordsService.deleteByFxsidAndUserId(pd);
+		return this.jsonContent("success", "删除成功");
+	}
 	
 	/**
 	 * 修改

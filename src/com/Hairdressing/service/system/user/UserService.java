@@ -38,6 +38,12 @@ public class UserService {
 		dao.update("UserMapper.edit", pd);
 	}
 	/*
+	* 修改
+	*/
+	public void editheadPortrait(PageData pd)throws Exception{
+		dao.update("UserMapper.editheadPortrait", pd);
+	}
+	/*
 	* 修改使用户成为发型师
 	*/
 	public void editToFaXingShi(PageData pd)throws Exception{
@@ -69,6 +75,12 @@ public class UserService {
 	*/
 	public PageData findById(PageData pd)throws Exception{
 		return (PageData)dao.findForObject("UserMapper.findById", pd);
+	}
+	/*
+	* 通过loginId获取数据
+	*/
+	public PageData findByloginId(PageData pd)throws Exception{
+		return (PageData)dao.findForObject("UserMapper.findByloginId", pd);
 	}
 	
 	/*

@@ -7,18 +7,25 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang.text.StrBuilder;
 import org.apache.shiro.crypto.hash.SimpleHash;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.Hairdressing.controller.base.BaseController;
 import com.Hairdressing.entity.Page;
 import com.Hairdressing.util.AppUtil;
+import com.Hairdressing.util.Const;
 import com.Hairdressing.util.DateUtil;
+import com.Hairdressing.util.FileUpload;
 import com.Hairdressing.util.ObjectExcelView;
 import com.Hairdressing.util.PageData;
+import com.Hairdressing.util.Tools;
+import com.alibaba.fastjson.JSON;
 
 import edu.umd.cs.findbugs.util.TripleKeyHashMap;
 
@@ -119,6 +126,48 @@ public class UserController extends BaseController {
 		PageData pd = this.getPageData();
 		this.userService.edit(pd);
 		return this.jsonContent("success", "保存成功");
+	}
+	/**
+	 * 检查客户是否注册了。
+	 * 
+	 * @param telnum  客户注册时候的手机号码
+	 * @return
+	 * @throws Exception
+	 */
+	@ResponseBody
+	@RequestMapping(value="/checkRegist", produces = "application/json;charset=UTF-8")
+	public String checkRegist() throws Exception{
+		logBefore(logger, "检查客户是否注册了");
+		PageData pd = this.getPageData();
+		Integer count = this.userService.testPhoneNumber(pd);
+	    if (count > 0) {
+	    	return this.jsonContent("success", "手机号已经注册过了！");
+		}else{
+			return this.jsonContent("failed", "手机号还没有注册，请注册！");
+		}
+	}
+	/**
+	 * 修改头像图标
+	 */
+	@ResponseBody
+	@RequestMapping(value="/editheadPortrait", produces = "application/json;charset=UTF-8")
+	public String editheadPortrait(@RequestParam(value="file", required=false) MultipartFile file
+			,@RequestParam(value="userId", required=false) String userId) throws Exception{
+		logBefore(logger, "修改头像图标head Portrait");
+		PageData pd = new PageData();
+		pd.put("userId", userId);
+		//文件上传处理部分start
+	    String saveFileName = DateUtil.sdfTimeString() + Tools.getRandomNum();
+	    String filePath = Const.HEADPORTRAIT_SAVE_PATH;
+	    String fileName = FileUpload.fileUp(file, filePath, saveFileName + "-"+file.getOriginalFilename());
+	    pd.put("headSculpturePath", fileName);
+	    //文件上传处理部分end
+		this.userService.editheadPortrait(pd);
+		PageData retpd = new PageData();
+		retpd.put("headSculpturePath", fileName);
+		retpd.put("state", "success");
+		retpd.put("message", "保存成功");
+		return JSON.toJSONString(retpd);
 	}
 	
 	

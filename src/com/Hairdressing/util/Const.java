@@ -39,6 +39,10 @@ public class Const {
 	//发型图片压缩后的存储的位置
 	public static final String HAIRSTYLE_SAVE_COMPRESS_PATH="/usr/local/images/hairstyle/compress";
 	//public static final String HAIRSTYLE_SAVE_COMPRESS_PATH="D:/tmp/compress";
+	
+	//头象图标存放位置
+	public static final String HEADPORTRAIT_SAVE_PATH="/usr/local/images/headPortrait";
+	//public static final String HEADPORTRAIT_SAVE_PATH="D:/tmp/headPortrait";
 
 
 

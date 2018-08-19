@@ -9,6 +9,7 @@
 			styletitle,
 			content,
 			userid,
+			FxsUserId,
 			publishtime,
 			viewcount,
 			srcImagePath,
@@ -18,7 +19,8 @@
         ) values (
 			#{styletitle},
 			#{content},
-			#{userid},
+			#{userId},
+			#{FxsUserId},
 			#{publishtime},
 			#{viewcount},
 			#{srcImagePath},
@@ -82,39 +84,121 @@
 					1
 				END
 			) rownum,
-			date_format(hairstyle.publishtime, '%Y%m%d') publishtime,
+			date_format(
+				hairstyle.publishtime,
+				'%Y%m%d'
+			) publishtime,
 			hairstyle.styletitle,
 			hairstyle.content,
 			hairstyle.srcImagePath,
 			(
 				@pre_publishtime := hairstyle.publishtime
 			) AS publishtimea,
-			hairstyle.ID as hairstyleId,
-			SYS_USER.userName,
+			hairstyle.ID AS hairstyleId,
+			hairstyle.userName,
 			hairstyle.evaluatecount,
-		    date_format(hairstyle.publishdateteime, '%Y%m%d%H%i%s') publishdateteime
+			date_format(
+				hairstyle.publishdateteime,
+				'%Y%m%d%H%i%s'
+			) publishdateteime
 		FROM
-			bus_hairstyle hairstyle,
-			SYS_USER SYS_USER,
+			(
+				SELECT
+					subhairstyle.*, subSYS_USER.userName
+				FROM
+					bus_hairstyle subhairstyle,
+					SYS_USER subSYS_USER
+				WHERE
+					subSYS_USER.userId = subhairstyle.userid
+				 <if test="pd.loginId != null and pd.loginId != ''">
+				   AND subSYS_USER.loginId = #{pd.loginId}
+				 </if>
+				ORDER BY
+					subhairstyle.publishdateteime DESC
+			) hairstyle,
 			(
 				SELECT
 					@i := 0 ,@pre_publishtime := ''
 			) AS a
-		WHERE
-			SYS_USER.userId = hairstyle.userid
-		AND SYS_USER.loginId = #{pd.loginId}
 		GROUP BY
 			hairstyle.publishtime,
-		  hairstyle.publishdateteime,
+			hairstyle.publishdateteime,
 			hairstyle.styletitle,
 			hairstyle.content,
 			hairstyle.srcImagePath,
 			hairstyle.ID,
-			SYS_USER.userName,
+			hairstyle.userName,
 			hairstyle.evaluatecount
 		ORDER BY
-			hairstyle.publishtime DESC,
-			rownum DESC
+			hairstyle.publishdateteime DESC
+    </select>
+    <!-- 发迹列表 关注的列表 -->
+    <select id="dataFouslistPage" parameterType="page" resultType="pd">
+		SELECT
+			(
+				@i := CASE
+				WHEN @pre_publishtime = hairstyle.publishtime THEN
+					@i + 1
+				ELSE
+					1
+				END
+			) rownum,
+			date_format(
+				hairstyle.publishtime,
+				'%Y%m%d'
+			) publishtime,
+			hairstyle.styletitle,
+			hairstyle.content,
+			hairstyle.srcImagePath,
+			(
+				@pre_publishtime := hairstyle.publishtime
+			) AS publishtimea,
+			hairstyle.ID AS hairstyleId,
+			hairstyle.userName,
+			hairstyle.evaluatecount,
+			date_format(
+				hairstyle.publishdateteime,
+				'%Y%m%d%H%i%s'
+			) publishdateteime
+		FROM
+			#bus_hairstyle hairstyle,
+			(
+				SELECT
+					subbus_hairstyle.*, subSYS_USER.userName
+				FROM
+					bus_hairstyle subbus_hairstyle,
+					SYS_USER subSYS_USER
+				WHERE
+					subSYS_USER.userId = subbus_hairstyle.userid
+				AND subSYS_USER.userId IN (
+					SELECT
+						focu.FXSID
+					FROM
+						bus_focusonrecords focu
+					WHERE
+						1 = 1
+		              <if test="pd.userId != null and pd.userId != ''">
+						and focu.USERID = #{pd.userId}
+				      </if>
+				)
+				ORDER BY
+					subbus_hairstyle.publishdateteime DESC
+			) hairstyle,
+			(
+				SELECT
+					@i := 0 ,@pre_publishtime := ''
+			) AS a
+		GROUP BY
+			hairstyle.publishtime,
+			hairstyle.publishdateteime,
+			hairstyle.styletitle,
+			hairstyle.content,
+			hairstyle.srcImagePath,
+			hairstyle.ID,
+			hairstyle.userName,
+			hairstyle.evaluatecount
+		ORDER BY
+			hairstyle.publishdateteime DESC
     </select>
 
     <!-- 列表(全部) -->

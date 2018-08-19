@@ -66,7 +66,6 @@
 		AND loginId = #{loginId}
 	</select>
 
-
     <!-- 修改 -->
     <update id="edit" parameterType="pd">
         update  SYS_USER
@@ -80,6 +79,14 @@
 				headSculpturePath = #{headSculpturePath},
 				delFlag = #{delFlag},
 				userId= userId
+        where
+		userId= #{userId}
+    </update>
+    <!-- 修改 -->
+    <update id="editheadPortrait" parameterType="pd">
+        update  SYS_USER
+        set
+				headSculpturePath = #{headSculpturePath}
         where
 		userId= #{userId}
     </update>
@@ -116,6 +123,24 @@
         where
 			a.userId= #{userId}
     </select>
+    <!-- 通过loginId(手机号码)获取数据 -->
+    <select id="findByloginId" parameterType="pd" resultType="pd">
+        select
+			a.userName,
+			a.businessId,
+			a.fxsPhone,
+			a.fxsQQorVX,
+			a.fxsUser,
+			a.diffFlag,
+			a.headSculpturePath,
+			a.createDate,
+			a.delFlag,
+			a.userId
+        from
+        	SYS_USER a
+        where
+			a.loginId= #{loginId}
+    </select>
 
     <!-- 列表 -->
     <select id="FXSlistPage" parameterType="page" resultType="pd">
@@ -129,7 +154,8 @@
 					t.fxsPhone,
 					shop.shop_name,
 					shop.shop_addr,
-					t.focusoncount
+					t.focusoncount,
+					t.headSculpturePath
 				FROM
 					sys_user t,
 					bus_shop shop

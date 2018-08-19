@@ -46,6 +46,12 @@ public class HairstyleService {
 	}
 	
 	/*
+	*发迹列表 关注的列表 
+	*/
+	public List<PageData> datalistFousPage(Page page)throws Exception{
+		return (List<PageData>)dao.findForList("HairstyleMapper.dataFouslistPage", page);
+	}
+	/*
 	*列表(全部)
 	*/
 	public List<PageData> listAll(PageData pd)throws Exception{
