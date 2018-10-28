@@ -128,8 +128,12 @@
 			a.ID
         from
         	BUS_SHOP a
+		where 1 = 1
+		<if test="SHOP_ADDR != null and SHOP_ADDR != ''">
+			and a.SHOP_ADDR = #{SHOP_ADDR}
+		</if>
     </select>
-
+    
     <!-- 批量删除 -->
     <delete id="deleteAll" parameterType="String">
         delete from BUS_SHOP

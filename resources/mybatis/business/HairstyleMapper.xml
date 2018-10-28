@@ -73,7 +73,7 @@
     </select>
 
 
-    <!-- 发迹列表 -->
+    <!-- 发迹列表  by loginId -->
     <select id="datalistPage" parameterType="page" resultType="pd">
 		SELECT
 			(
@@ -132,6 +132,65 @@
 		ORDER BY
 			hairstyle.publishdateteime DESC
     </select>
+    <!-- 发型师发布的发型列表展示  by UserId-->
+    <select id="datalistPageByUserId" parameterType="page" resultType="pd">
+		SELECT
+			(
+				@i := CASE
+				WHEN @pre_publishtime = hairstyle.publishtime THEN
+					@i + 1
+				ELSE
+					1
+				END
+			) rownum,
+			date_format(
+				hairstyle.publishtime,
+				'%Y%m%d'
+			) publishtime,
+			hairstyle.styletitle,
+			hairstyle.content,
+			hairstyle.srcImagePath,
+			(
+				@pre_publishtime := hairstyle.publishtime
+			) AS publishtimea,
+			hairstyle.ID AS hairstyleId,
+			hairstyle.userName,
+			hairstyle.evaluatecount,
+			date_format(
+				hairstyle.publishdateteime,
+				'%Y%m%d%H%i%s'
+			) publishdateteime
+		FROM
+			(
+				SELECT
+					subhairstyle.*, subSYS_USER.userName
+				FROM
+					bus_hairstyle subhairstyle,
+					SYS_USER subSYS_USER
+				WHERE
+					subSYS_USER.userId = subhairstyle.FxsUserId
+				 <if test="pd.userId != null and pd.userId != ''">
+				   AND subSYS_USER.userId = #{pd.userId}
+				 </if>
+				ORDER BY
+					subhairstyle.publishdateteime DESC
+			) hairstyle,
+			(
+				SELECT
+					@i := 0 ,@pre_publishtime := ''
+			) AS a
+		GROUP BY
+			hairstyle.publishtime,
+			hairstyle.publishdateteime,
+			hairstyle.styletitle,
+			hairstyle.content,
+			hairstyle.srcImagePath,
+			hairstyle.ID,
+			hairstyle.userName,
+			hairstyle.evaluatecount
+		ORDER BY
+			hairstyle.publishdateteime DESC
+    </select>
     <!-- 发迹列表 关注的列表 -->
     <select id="dataFouslistPage" parameterType="page" resultType="pd">
 		SELECT
@@ -169,7 +228,7 @@
 					bus_hairstyle subbus_hairstyle,
 					SYS_USER subSYS_USER
 				WHERE
-					subSYS_USER.userId = subbus_hairstyle.userid
+					subSYS_USER.userId = subbus_hairstyle.FxsUserId
 				AND subSYS_USER.userId IN (
 					SELECT
 						focu.FXSID
