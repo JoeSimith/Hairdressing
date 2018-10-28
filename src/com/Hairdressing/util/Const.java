@@ -44,9 +44,6 @@ public class Const {
 	public static final String HEADPORTRAIT_SAVE_PATH="/usr/local/images/headPortrait";
 	//public static final String HEADPORTRAIT_SAVE_PATH="D:/tmp/headPortrait";
     
-	//微信
-	public static final String APPID="wx98e9c2200d8220c9";
-	public static String GETCODE="https://open.weixin.qq.com/connect/oauth2/authorize?appid=APPID&redirect_uri=REDIRECT_URI&response_type=code&scope=SCOPE&state=STATE#wechat_redirect";
 
 	
 }

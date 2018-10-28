@@ -23,7 +23,8 @@
     <delete id="delete" parameterType="pd">
         delete from BUS_HAIRSTYLEEVALUATE
         where
-		id= #{id}
+		hairstyleid= #{hairstyleid}
+		and userid = #{userid}
     </delete>
 
 
