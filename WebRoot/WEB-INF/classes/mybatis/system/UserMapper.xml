@@ -152,10 +152,11 @@
 					t.userId,
 					t.fxsUser,
 					t.fxsPhone,
-					shop.shop_name,
+					shop.shop_shopname,
 					shop.shop_addr,
 					t.focusoncount,
-					t.headSculpturePath
+					t.headSculpturePath,
+					t.userName
 				FROM
 					sys_user t,
 					bus_shop shop
@@ -165,12 +166,16 @@
 			) allfxs
 		LEFT JOIN (
 			SELECT
-				t.FXSID
+				fct.FXSID
 			FROM
-				bus_focusonrecords t
+				bus_focusonrecords fct
 			WHERE
-				t.USERID = #{pd.userId}
+				fct.USERID = #{pd.userId}
 		) focus ON allfxs.userId = focus.FXSID
+		where 1=1
+		 <if test="pd.shopNameOrUserName != null and pd.shopNameOrUserName != ''">
+		   and (allfxs.shop_shopname LIKE CONCAT('%',#{pd.shopNameOrUserName},'%') or  allfxs.userName LIKE CONCAT('%',#{pd.shopNameOrUserName},'%'))
+		 </if>
     </select>
 
     <!-- 列表 -->
