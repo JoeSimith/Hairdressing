@@ -36,3 +36,19 @@ values ('88a680d6ac914413869de431a94ea527', '土方开挖', '系统管理员', '
 ---------------------------------------------------------------------------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------------------------------------------------------------------------
 
+---增加触发器 点赞自动增加删除点赞个数20181028  start ---
+
+--增加
+CREATE TRIGGER hairstyleevaluateAdd AFTER INSERT
+ON bus_hairstyleevaluate FOR EACH ROW
+BEGIN
+    UPDATE bus_hairstyle t set t.evaluatecount = t.evaluatecount + 1 where t.ID = NEW.hairstyleid;
+END
+
+--删除
+CREATE TRIGGER hairstyleevaluateDel AFTER DELETE
+ON bus_hairstyleevaluate FOR EACH ROW
+BEGIN
+    UPDATE bus_hairstyle t set t.evaluatecount = t.evaluatecount - 1 where t.ID = OLD.hairstyleid;
+END
+---增加触发器 点赞自动增加删除点赞个数20181028  end ---

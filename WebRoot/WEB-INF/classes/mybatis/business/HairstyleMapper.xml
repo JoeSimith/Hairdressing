@@ -100,22 +100,32 @@
 			date_format(
 				hairstyle.publishdateteime,
 				'%Y%m%d%H%i%s'
-			) publishdateteime
+			) publishdateteime,
+			hairstyle.hairstyleevaluateId
 		FROM
 			(
 				SELECT
-					subhairstyle.*, subSYS_USER.userName
+					hairstylelist.*, hairstyleevaluate.ID AS hairstyleevaluateId
 				FROM
-					bus_hairstyle subhairstyle,
-					SYS_USER subSYS_USER
-				WHERE
-					subSYS_USER.userId = subhairstyle.userid
-				 <if test="pd.loginId != null and pd.loginId != ''">
-				   AND subSYS_USER.loginId = #{pd.loginId}
-				 </if>
-				ORDER BY
-					subhairstyle.publishdateteime DESC
-			) hairstyle,
+					(
+           SELECT
+						subhairstyle.*, subSYS_USER.userName
+					FROM
+						bus_hairstyle subhairstyle,
+						SYS_USER subSYS_USER
+					WHERE
+						subSYS_USER.userId = subhairstyle.userid
+					 <if test="pd.loginId != null and pd.loginId != ''">
+						 AND subSYS_USER.loginId = #{pd.loginId}
+					 </if>
+					ORDER BY
+						subhairstyle.publishdateteime DESC
+         ) hairstylelist 
+				LEFT JOIN bus_hairstyleevaluate hairstyleevaluate ON hairstyleevaluate.hairstyleid = hairstylelist.ID
+				<if test="pd.userId != null and pd.userId != ''">
+				 AND hairstyleevaluate.userid = #{pd.userId}
+				</if>
+       ) hairstyle,
 			(
 				SELECT
 					@i := 0 ,@pre_publishtime := ''
@@ -128,7 +138,8 @@
 			hairstyle.srcImagePath,
 			hairstyle.ID,
 			hairstyle.userName,
-			hairstyle.evaluatecount
+			hairstyle.evaluatecount,
+			hairstyle.hairstyleevaluateId
 		ORDER BY
 			hairstyle.publishdateteime DESC
     </select>
@@ -159,21 +170,31 @@
 			date_format(
 				hairstyle.publishdateteime,
 				'%Y%m%d%H%i%s'
-			) publishdateteime
+			) publishdateteime,
+			hairstyle.hairstyleevaluateId
 		FROM
 			(
 				SELECT
-					subhairstyle.*, subSYS_USER.userName
+					hairstylelist.*, hairstyleevaluate.ID AS hairstyleevaluateId
 				FROM
-					bus_hairstyle subhairstyle,
-					SYS_USER subSYS_USER
-				WHERE
-					subSYS_USER.userId = subhairstyle.FxsUserId
-				 <if test="pd.userId != null and pd.userId != ''">
-				   AND subSYS_USER.userId = #{pd.userId}
-				 </if>
-				ORDER BY
-					subhairstyle.publishdateteime DESC
+					(
+						SELECT
+							subhairstyle.*, subSYS_USER.userName
+						FROM
+							bus_hairstyle subhairstyle,
+							SYS_USER subSYS_USER
+						WHERE
+							subSYS_USER.userId = subhairstyle.FxsUserId 
+						<if test = "pd.FxsUserId != null and pd.FxsUserId != ''" >
+						   AND subSYS_USER.userId = #{pd.FxsUserId}
+						</if>
+						ORDER BY
+							subhairstyle.publishdateteime DESC
+					) hairstylelist
+				LEFT JOIN bus_hairstyleevaluate hairstyleevaluate ON hairstyleevaluate.hairstyleid = hairstylelist.ID 
+				<if test = "pd.userId != null and pd.userId != ''" >
+				   AND hairstyleevaluate.userid = #{pd.userId}
+				</if>
 			) hairstyle,
 			(
 				SELECT
@@ -187,7 +208,8 @@
 			hairstyle.srcImagePath,
 			hairstyle.ID,
 			hairstyle.userName,
-			hairstyle.evaluatecount
+			hairstyle.evaluatecount,
+			hairstyle.hairstyleevaluateId
 		ORDER BY
 			hairstyle.publishdateteime DESC
     </select>
