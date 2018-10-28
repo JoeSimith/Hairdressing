@@ -170,7 +170,7 @@ public class HairstyleController extends BaseController {
 	}
 	
 	/**
-	 * 返回列表JSON
+	 * 返回列表JSON  by  loginId
 	 * 
 	 * @throws Exception
 	 */
@@ -187,6 +187,26 @@ public class HairstyleController extends BaseController {
 		List<PageData> resultList = this.hairstyleService.listPage(page);// 分页查询列表
 		return this.jsonContent(resultList, page);
 	}
+	
+	/**
+	 * 返回列表JSON  by  UserId
+	 * 
+	 * @throws Exception
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/getGridListJsonByUserId", produces = "application/json;charset=UTF-8")
+	public Object getGridListJsonByUserId() throws Exception {
+		logBefore(logger, "获取Hairstyle列表Json");
+		PageData pd = this.getPageData();
+		Page page = new Page();
+		page.setCurrentPage(pd.getInt("page"));
+		page.setShowCount(pd.getInt("rows"));
+		pd.put("loginId",pd.get("loginId"));
+		page.setPd(pd);
+		List<PageData> resultList = this.hairstyleService.listPageByUserId(page);// 分页查询列表
+		return this.jsonContent(resultList, page);
+	}
+	
 	/**
 	 * 返回列表JSON  关注的列表 
 	 * 
