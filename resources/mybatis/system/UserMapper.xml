@@ -102,6 +102,14 @@
         where
 		userId= #{userId}
     </update>
+    <!-- 修改发型师的店铺名 -->
+    <update id="UpdateToShopAddress" parameterType="pd">
+        update  SYS_USER
+        set
+				businessId = #{businessId}
+        where
+		userId= #{userId}
+    </update>
 
 
     <!-- 通过ID获取数据 -->

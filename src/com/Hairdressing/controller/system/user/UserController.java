@@ -73,6 +73,22 @@ public class UserController extends BaseController {
 	    this.userService.editToFaXingShi(pd);
 		return this.jsonContent("success", "保存成功");
 	}
+
+	/**
+	 * 修改发型师的店铺名
+	 * @param 店铺businessId String businessId
+	 * @param 用户id String userId
+	 * @return
+	 * @throws Exception
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/UpdateToShopAddress", produces = "application/json;charset=UTF-8")
+	public String UpdateToShopAddress() throws Exception{
+		logBefore(logger, "修改发型师的店铺名");
+		PageData pd = this.getPageData();
+	    this.userService.UpdateToShopAddress(pd);
+		return this.jsonContent("success", "保存成功");
+	}
 	
 	/**
 	 * 新增

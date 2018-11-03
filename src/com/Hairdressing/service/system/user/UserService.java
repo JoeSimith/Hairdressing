@@ -51,6 +51,13 @@ public class UserService {
 	}
 	
 	/*
+	* 修改使用户成为发型师
+	*/
+	public void UpdateToShopAddress(PageData pd)throws Exception{
+		dao.update("UserMapper.UpdateToShopAddress", pd);
+	}
+	
+	/*
 	*发型师名片
 	*/
 	public List<PageData> FXSlistPage(Page page)throws Exception{
