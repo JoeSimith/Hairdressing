@@ -102,6 +102,14 @@
         where
 		userId= #{userId}
     </update>
+    <!-- 修改发型师的店铺名 -->
+    <update id="UpdateToShopAddress" parameterType="pd">
+        update  SYS_USER
+        set
+				businessId = #{businessId}
+        where
+		userId= #{userId}
+    </update>
 
 
     <!-- 通过ID获取数据 -->
@@ -176,7 +184,8 @@
 		 <if test="pd.shopNameOrUserName != null and pd.shopNameOrUserName != ''">
 		   and (allfxs.shop_shopname LIKE CONCAT('%',#{pd.shopNameOrUserName},'%') or 
 		   allfxs.userName LIKE CONCAT('%',#{pd.shopNameOrUserName},'%') or 
-		   allfxs.fxsUser LIKE CONCAT('%',#{pd.shopNameOrUserName},'%'))
+		   allfxs.fxsUser LIKE CONCAT('%',#{pd.shopNameOrUserName},'%') or
+		   allfxs.shop_addr LIKE CONCAT('%',#{pd.shopNameOrUserName},'%'))
 		 </if>
     </select>
 
